@@ -1,0 +1,8 @@
+{
+	"shell-version": ["3.2.1"], 
+	"uuid": "todolist@bsaleil.org", 
+	"name": "Todo list", 
+	"description": "Simple todo list extension. You can add and remove task on your list.",
+	"configFile": "list.tasks",
+	"url": "http://bsaleil.org/"
+}
