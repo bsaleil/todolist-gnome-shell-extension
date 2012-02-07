@@ -10,4 +10,6 @@ msgstr "1 tâche"
 #: extension.js:81
 msgid "tasks"
 msgstr "tâches"
-
+#: extension.js:96
+msgid "New task…"
+msgstr "Nouvelle tâche…"
