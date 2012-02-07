@@ -93,7 +93,7 @@ TasksManager.prototype =
 		this.newTask = new St.Entry(
 		{
 			name: "searchEntry",
-			hint_text: Gettext.gettext("New task…"),
+			hint_text: Gettext.gettext("New task..."),
 			track_hover: true,
 			can_focus: true
 		});
