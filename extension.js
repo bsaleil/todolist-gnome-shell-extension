@@ -40,7 +40,7 @@ TasksManager.prototype =
 		Gettext.bindtextdomain("todolist", userExtensionLocalePath);
 		Gettext.textdomain("todolist");
 		
-		this.buttonText = new St.Label({text:Gettext.gettext("Tasks…")});
+		this.buttonText = new St.Label({text:Gettext.gettext("Tasks...")});
 		this.actor.add_actor(this.buttonText);
 		this._test();
     	},

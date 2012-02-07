@@ -1,5 +1,5 @@
 #: extension.js:43
-msgid "Tasks…"
+msgid "Tasks..."
 msgstr "Tâches…"
 #: extension.js:79
 msgid "No task"
