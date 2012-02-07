@@ -1,10 +1,5 @@
-.label
+.newTaskSection
 {
-	font-weight: bold;
-	text-align : center;
-}
-
-.newTask
-{
-	width : 300px;
+	width:276px;
+	padding:0 12px;
 }

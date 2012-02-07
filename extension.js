@@ -33,26 +33,15 @@ TasksManager.prototype =
     	{	
 		PanelMenu.Button.prototype._init.call(this, St.Align.START);
 		this.buttonText = new St.Label({});
-		this.buttonText.set_text("Todo");
+		this.buttonText.set_text("Tasks…");
 		this.actor.add_actor(this.buttonText);
 		this._test();
-		
     	},
     	
     	_test: function()
     	{    	
     		// Clear all
-    		this.menu.removeAll();
-    		// Head section
-	      	let headSection = new PopupMenu.PopupMenuSection();
-	      	// Title
-		this.label = new St.Label({ text: 'Tasks :', style_class: 'label'});
-		headSection.actor.add_actor(this.label);
-		// Separator
-		this.labelSeparator = new PopupMenu.PopupSeparatorMenuItem();
-		headSection.addMenuItem(this.labelSeparator);
-		this.menu.addMenuItem(headSection);
-		
+    		this.menu.removeAll();		
 		
 		// Tasks
 		let varFile = this.file;
@@ -60,35 +49,46 @@ TasksManager.prototype =
 		{
 			let content = Shell.get_file_contents_utf8_sync(this.file);
 			
-			let tasks = content.toString().split('\n');
-			for (let i=0; i<tasks.length; i++)
+			let lines = content.toString().split('\n');
+			let tasks = 0;
+			
+			for (let i=0; i<lines.length; i++)
 			{
 				// if not a comment && not empty
-				if (tasks[i][0] != '#' && tasks[i] != '' && tasks[i] != '\n')
+				if (lines[i][0] != '#' && lines[i] != '' && lines[i] != '\n')
 				{
-					let item = new PopupMenu.PopupMenuItem(_(tasks[i]));
-					let textClicked = tasks[i];
+					let item = new PopupMenu.PopupMenuItem(_(lines[i]));
+					let textClicked = lines[i];
 					item.connect('activate',
 						function(){removeTask(textClicked,varFile);});
 					this.menu.addMenuItem(item);
+					
+					tasks += 1;
 				}
+			}
+			
+			switch (tasks)
+			{
+				case 0 :this.buttonText.set_text("No task"); break;
+				case 1 :this.buttonText.set_text("1 task"); break;
+				default:this.buttonText.set_text(tasks + " tasks"); break;
 			}
 		}
 		else { global.logError("Todo list : Error while reading file : " + this.file); }
 		
+		// Separator
+		this.Separator = new PopupMenu.PopupSeparatorMenuItem();
+		this.menu.addMenuItem(this.Separator);
+		
 		// Bottom section
 		let bottomSection = new PopupMenu.PopupMenuSection();
-		// Separator
-		this.bottomSeparator = new PopupMenu.PopupSeparatorMenuItem();
-		bottomSection.addMenuItem(this.bottomSeparator);
-		// Add entry
+		
 		this.newTask = new St.Entry(
 		{
 			name: "searchEntry",
 			hint_text: _("New task..."),
 			track_hover: true,
-			can_focus: true,
-			style_class: 'newTask'
+			can_focus: true
 		});
 		let entryNewTask = this.newTask.clutter_text;
 		entryNewTask.connect('key-press-event', function(o,e)
@@ -100,9 +100,17 @@ TasksManager.prototype =
 		    		entryNewTask.set_text('');
 			}
 		});
+		
 		bottomSection.actor.add_actor(this.newTask);
+		bottomSection.actor.add_style_class_name("newTaskSection");
 		this.menu.addMenuItem(bottomSection);
     	},
+    	
+	updateTasksNumber: function(text)
+	{
+		let number = text.innerHTML.split("\\n" ).length;
+		this.buttonText.set_text(number + "tasks");
+	},
    
 	enable: function()
 	{
