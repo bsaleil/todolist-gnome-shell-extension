@@ -16,31 +16,28 @@ const Gio = imports.gi.Gio;
 const Shell = imports.gi.Shell;
 
 const Gettext = imports.gettext;
+const _ = Gettext.domain('todolist').gettext;
 
 // TasksManager function
 function TasksManager(metadata)
 {	
-	this.file = metadata.path;
-	this.file += "/";
-	this.file += metadata.configFile;
+	this.file = metadata.path + "/" + metadata.configFile;
 	
-	this._init(metadata);
+	let locales = metadata.path + "/locale";
+	Gettext.bindtextdomain('todolist', locales);
+		
+	this._init();
 }
 
 // Prototype
 TasksManager.prototype =
 {
 	__proto__: PanelMenu.Button.prototype,
-    	_init: function(metadata) 
-    	{	
+    	_init: function() 
+    	{			
 		PanelMenu.Button.prototype._init.call(this, St.Align.START);
 
-		let userExtensionLocalePath = metadata.path + '/locale';
- 
-		Gettext.bindtextdomain("todolist", userExtensionLocalePath);
-		Gettext.textdomain("todolist");
-		
-		this.buttonText = new St.Label({text:Gettext.gettext("Tasks...")});
+		this.buttonText = new St.Label({text:_("Tasks...")});
 		this.actor.add_actor(this.buttonText);
 		this._test();
     	},
@@ -76,9 +73,9 @@ TasksManager.prototype =
 			
 			switch (tasks)
 			{
-				case 0 :this.buttonText.set_text(Gettext.gettext("No task")); break;
-				case 1 :this.buttonText.set_text(Gettext.gettext("1 task")); break;
-				default:this.buttonText.set_text(tasks + " " + Gettext.gettext("tasks")); break;
+				case 0 :this.buttonText.set_text(_("No task")); break;
+				case 1 :this.buttonText.set_text(_("1 task")); break;
+				default:this.buttonText.set_text(tasks + " " + _("tasks")); break;
 			}
 		}
 		else { global.logError("Todo list : Error while reading file : " + this.file); }
@@ -93,7 +90,7 @@ TasksManager.prototype =
 		this.newTask = new St.Entry(
 		{
 			name: "searchEntry",
-			hint_text: Gettext.gettext("New task..."),
+			hint_text: _("New task..."),
 			track_hover: true,
 			can_focus: true
 		});
@@ -184,6 +181,6 @@ function addTask(text,file)
 
 // Init function
 function init(metadata) 
-{
+{		
 	return new TasksManager(metadata);
 }
