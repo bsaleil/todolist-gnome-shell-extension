@@ -1,0 +1,15 @@
+#: extension.js:43
+msgid "Tasks..."
+msgstr "Tâches..."
+#: extension.js:79
+msgid "No task"
+msgstr "Tranquille"
+#: extension.js:80
+msgid "1 task"
+msgstr "1 tâche"
+#: extension.js:81
+msgid "tasks"
+msgstr "tâches"
+#: extension.js:96
+msgid "New task..."
+msgstr "Nouvelle tâche..."
