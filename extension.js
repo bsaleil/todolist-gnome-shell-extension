@@ -1,13 +1,12 @@
-// This extension was developed by Baptiste Saleil
-// Contact me if you have any problem, bug,...
-// http://bsaleil.org/
-// 
+// This extension was developed by :
+// * Baptiste Saleil http://bsaleil.org/
+// * Arnaud Bonatti https://github.com/Obsidien
+//
 // Licence: GPLv2+
 
 const St = imports.gi.St;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
-const Panel = imports.ui.panel;
 const Main = imports.ui.main;
 const Lang = imports.lang;
 const Clutter = imports.gi.Clutter;
@@ -21,7 +20,7 @@ const _ = Gettext.domain('todolist').gettext;
 // TasksManager function
 function TasksManager(metadata)
 {	
-	this.file = metadata.path + "/" + metadata.configFile;
+	this.file = metadata.path + "/list.tasks";
 	
 	let locales = metadata.path + "/locale";
 	Gettext.bindtextdomain('todolist', locales);
