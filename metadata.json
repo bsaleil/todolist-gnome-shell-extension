@@ -7,7 +7,7 @@
     "3.3.4", 
     "3.3.5"
   ], 
-  "url": "", 
+  "url": "https://github.com/Obsidien/todolist-gnome-shell-extension", 
   "uuid": "todolist@obsidien.github.com", 
   "version": 5
 }

@@ -107,12 +107,9 @@ TasksManager.prototype =
 		bottomSection.actor.add_actor(this.newTask);
 		bottomSection.actor.add_style_class_name("newTaskSection");
 		this.menu.addMenuItem(bottomSection);
-    	},
-    	
-	updateTasksNumber: function(text)
-	{
-		let number = text.innerHTML.split("\\n" ).length;
-		this.buttonText.set_text(number + "tasks");
+		this.menu.connect('open-state-changed', Lang.bind(this, function(menu, isOpen) {
+			if (isOpen) {this.newTask.grab_key_focus();}
+		}));
 	},
    
 	enable: function()
