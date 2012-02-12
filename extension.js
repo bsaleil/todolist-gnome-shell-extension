@@ -32,24 +32,29 @@ function TasksManager(metadata)
 TasksManager.prototype =
 {
 	__proto__: PanelMenu.Button.prototype,
+	
     	_init: function() 
     	{			
 		PanelMenu.Button.prototype._init.call(this, St.Align.START);
 
-		this.buttonText = new St.Label({text:"(···)"});
+		this.buttonText = new St.Label({text:_("(...)")});
 		this.buttonText.set_style("text-align:center;");
 		this.actor.add_actor(this.buttonText);
 		this.buttonText.get_parent().set_width(40);
-		this._test();
-    	},
-    	
-    	_test: function()
-    	{    	
-    		// Clear all
-    		this.menu.removeAll();		
-		
-		// Tasks
+			
+		this._refresh();
+	},
+	
+	_refresh: function()
+	{    		
 		let varFile = this.file;
+		let tasksMenu = this.menu;
+		let buttonText = this.buttonText;
+
+    		// Clear
+    		tasksMenu.removeAll();
+		
+    		// Sync
 		if (GLib.file_test(this.file, GLib.FileTest.EXISTS))
 		{
 			let content = Shell.get_file_contents_utf8_sync(this.file);
@@ -64,27 +69,29 @@ TasksManager.prototype =
 				{
 					let item = new PopupMenu.PopupMenuItem(_(lines[i]));
 					let textClicked = lines[i];
-					item.connect('activate',
-						function(){removeTask(textClicked,varFile);});
-					this.menu.addMenuItem(item);
+					item.connect('activate', function(){
+						buttonText.set_text(_("(...)"));
+						removeTask(textClicked,varFile);
+					});
+					tasksMenu.addMenuItem(item);
 					
 					tasks += 1;
 				}
 			}
-			this.buttonText.set_text("(" + tasks + ")");
+			buttonText.set_text("(" + tasks + ")");
 		}
-		else { global.logError("Todo list : Error while reading file : " + this.file); }
+		else { global.logError("Todo list : Error while reading file : " + varFile); }
 		
 		// Separator
 		this.Separator = new PopupMenu.PopupSeparatorMenuItem();
-		this.menu.addMenuItem(this.Separator);
+		tasksMenu.addMenuItem(this.Separator);
 		
 		// Bottom section
 		let bottomSection = new PopupMenu.PopupMenuSection();
 		
 		this.newTask = new St.Entry(
 		{
-			name: "searchEntry",
+			name: "newTaskEntry",
 			hint_text: _("New task..."),
 			track_hover: true,
 			can_focus: true
@@ -95,6 +102,8 @@ TasksManager.prototype =
 			let symbol = e.get_key_symbol();
 		    	if (symbol == Clutter.Return)
 		    	{
+				tasksMenu.close();
+				buttonText.set_text(_("(...)"));
 				addTask(o.get_text(),varFile);
 		    		entryNewTask.set_text('');
 			}
@@ -102,26 +111,28 @@ TasksManager.prototype =
 		
 		bottomSection.actor.add_actor(this.newTask);
 		bottomSection.actor.add_style_class_name("newTaskSection");
-		this.menu.addMenuItem(bottomSection);
-		this.menu.connect('open-state-changed', Lang.bind(this, function(menu, isOpen) {
+		tasksMenu.addMenuItem(bottomSection);
+		tasksMenu.connect('open-state-changed', Lang.bind(this, function(menu, isOpen) {
 			if (isOpen) {this.newTask.grab_key_focus();}
 		}));
 	},
-   
+	
 	enable: function()
 	{
-		let _children = Main.panel._rightBox.get_children();
+		// Main.panel.addToStatusArea('tasks', this);  // how to destroy that correctly?
 		Main.panel._rightBox.insert_actor(this.actor, 0);
 		Main.panel._menus.addMenu(this.menu);
+		
 		// Refresh menu
 		let fileM = Gio.file_new_for_path(this.file);
 		this.monitor = fileM.monitor(Gio.FileMonitorFlags.NONE, null);
-		this.monitor.connect('changed', Lang.bind(this, this._test));
+		this.monitor.connect('changed', Lang.bind(this, this._refresh));
 	},
 
 	disable: function()
 	{
 		Main.panel._menus.removeMenu(this.menu);
+		// Main.panel._statusArea['tasks'].destroy();
 		Main.panel._rightBox.remove_actor(this.actor);
 	}
 }

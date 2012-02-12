@@ -1,3 +1,6 @@
-#: extension.js:88
+#: extension.js:39 104
+msgid "(...)"
+msgstr "(···)"
+#: extension.js:92
 msgid "New task..."
 msgstr "Nouvelle tâche…"
