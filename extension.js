@@ -21,10 +21,10 @@ const _ = Gettext.domain('todolist').gettext;
 function TasksManager(metadata)
 {	
 	this.file = metadata.path + "/list.tasks";
-	
+
 	let locales = metadata.path + "/locale";
 	Gettext.bindtextdomain('todolist', locales);
-		
+
 	this._init();
 }
 
@@ -36,8 +36,10 @@ TasksManager.prototype =
     	{			
 		PanelMenu.Button.prototype._init.call(this, St.Align.START);
 
-		this.buttonText = new St.Label({text:_("Tasks...")});
+		this.buttonText = new St.Label({text:"(···)"});
+		this.buttonText.set_style("text-align:center;");
 		this.actor.add_actor(this.buttonText);
+		this.buttonText.get_parent().set_width(40);
 		this._test();
     	},
     	
@@ -69,13 +71,7 @@ TasksManager.prototype =
 					tasks += 1;
 				}
 			}
-			
-			switch (tasks)
-			{
-				case 0 :this.buttonText.set_text(_("No task")); break;
-				case 1 :this.buttonText.set_text(_("1 task")); break;
-				default:this.buttonText.set_text(tasks + " " + _("tasks")); break;
-			}
+			this.buttonText.set_text("(" + tasks + ")");
 		}
 		else { global.logError("Todo list : Error while reading file : " + this.file); }
 		
