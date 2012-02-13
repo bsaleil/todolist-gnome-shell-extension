@@ -40,7 +40,7 @@ TasksManager.prototype =
 		this.buttonText = new St.Label({text:_("(...)")});
 		this.buttonText.set_style("text-align:center;");
 		this.actor.add_actor(this.buttonText);
-		this.buttonText.get_parent().set_width(40);
+		this.buttonText.get_parent().add_style_class_name("panelButtonWidth");
 			
 		this._refresh();
 	},
@@ -79,6 +79,8 @@ TasksManager.prototype =
 				}
 			}
 			buttonText.set_text("(" + tasks + ")");
+			if (tasks < 10) buttonText.get_parent().add_style_class_name("panelButtonWidth");
+			else buttonText.get_parent().remove_style_class_name("panelButtonWidth");
 		}
 		else { global.logError("Todo list : Error while reading file : " + varFile); }
 		
@@ -112,9 +114,9 @@ TasksManager.prototype =
 		bottomSection.actor.add_actor(this.newTask);
 		bottomSection.actor.add_style_class_name("newTaskSection");
 		tasksMenu.addMenuItem(bottomSection);
-		tasksMenu.connect('open-state-changed', Lang.bind(this, function(menu, isOpen) {
+		/* tasksMenu.connect('open-state-changed', Lang.bind(this, function(menu, isOpen) {
 			if (isOpen) {this.newTask.grab_key_focus();}
-		}));
+		}));*/ 
 	},
 	
 	enable: function()

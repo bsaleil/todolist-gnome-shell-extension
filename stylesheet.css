@@ -2,6 +2,10 @@
 	padding:0 12px;
 }
 
+.panelButtonWidth {
+	width:40px;
+}
+
 /* Same style as #searchEntry on theme/gnome-shell.css */
 
 #newTaskEntry {
