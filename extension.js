@@ -136,6 +136,7 @@ TasksManager.prototype =
 		Main.panel._menus.removeMenu(this.menu);
 		// Main.panel._statusArea['tasks'].destroy();
 		Main.panel._rightBox.remove_actor(this.actor);
+		this.monitor.cancel();
 	}
 }
 
