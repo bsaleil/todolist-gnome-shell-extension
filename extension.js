@@ -122,7 +122,7 @@ TasksManager.prototype =
 	enable: function()
 	{
 		// Main.panel.addToStatusArea('tasks', this);  // how to destroy that correctly?
-		Main.panel._rightBox.insert_actor(this.actor, 0);
+		Main.panel._rightBox.insert_child_at_index(this.actor, 0);
 		Main.panel._menus.addMenu(this.menu);
 		
 		// Refresh menu
