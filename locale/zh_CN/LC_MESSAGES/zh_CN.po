@@ -1,0 +1,20 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: tuhaihe <1132321739qq@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: extension.js:40
+#: 73 106
+msgid "(...)"
+msgstr "(...)"
+
+#: extension.js:95
+msgid "New task..."
+msgstr "新任务..."
+
