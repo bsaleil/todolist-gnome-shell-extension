@@ -17,6 +17,9 @@ const Shell = imports.gi.Shell;
 const Gettext = imports.gettext;
 const _ = Gettext.domain('todolist').gettext;
 
+let meta;
+let todo;
+
 // TasksManager function
 function TasksManager(metadata)
 {	
@@ -114,28 +117,18 @@ TasksManager.prototype =
 		bottomSection.actor.add_actor(this.newTask);
 		bottomSection.actor.add_style_class_name("newTaskSection");
 		tasksMenu.addMenuItem(bottomSection);
-		/* tasksMenu.connect('open-state-changed', Lang.bind(this, function(menu, isOpen) {
-			if (isOpen) {this.newTask.grab_key_focus();}
-		}));*/ 
 	},
 	
-	enable: function()
-	{
-		// Main.panel.addToStatusArea('tasks', this);  // how to destroy that correctly?
-		Main.panel._rightBox.insert_child_at_index(this.actor, 0);
-		Main.panel._menus.addMenu(this.menu);
-		
+	_enable: function()
+	{		
 		// Refresh menu
 		let fileM = Gio.file_new_for_path(this.file);
 		this.monitor = fileM.monitor(Gio.FileMonitorFlags.NONE, null);
 		this.monitor.connect('changed', Lang.bind(this, this._refresh));
 	},
 
-	disable: function()
+	_disable: function()
 	{
-		Main.panel._menus.removeMenu(this.menu);
-		// Main.panel._statusArea['tasks'].destroy();
-		Main.panel._rightBox.remove_actor(this.actor);
 		this.monitor.cancel();
 	}
 }
@@ -161,9 +154,11 @@ function removeTask(text,file)
 				}
 			}
 		}
+		
 		let f = Gio.file_new_for_path(file);
 		let out = f.replace(null, false, Gio.FileCreateFlags.NONE, null);
 		Shell.write_string_to_stream (out, newText);
+		out.close(null);
 	}
 	else 
 	{ global.logError("Todo list : Error while reading file : " + file); }
@@ -180,6 +175,7 @@ function addTask(text,file)
 		let f = Gio.file_new_for_path(file);
 		let out = f.replace(null, false, Gio.FileCreateFlags.NONE, null);
 		Shell.write_string_to_stream (out, content);
+		out.close(null);
 	}
 	else 
 	{ global.logError("Todo list : Error while reading file : " + file); }
@@ -188,5 +184,19 @@ function addTask(text,file)
 // Init function
 function init(metadata) 
 {		
-	return new TasksManager(metadata);
+	meta = metadata;
+}
+
+function enable()
+{
+	todo = new TasksManager(meta);
+	todo._enable();
+	Main.panel.addToStatusArea('todo', todo);
+}
+
+function disable()
+{
+	todo._disable();
+	todo.destroy();
+	todo = null;
 }
