@@ -17,6 +17,9 @@ const Shell = imports.gi.Shell;
 const Gettext = imports.gettext;
 const _ = Gettext.domain('todolist').gettext;
 
+const KEY_ENTER = 65293;
+const KEY_RETURN = 65421;
+
 let meta;
 let todo;
 
@@ -105,7 +108,7 @@ TasksManager.prototype =
 		entryNewTask.connect('key-press-event', function(o,e)
 		{
 			let symbol = e.get_key_symbol();
-		    	if (symbol == Clutter.Return)
+		    	if (symbol == KEY_RETURN || symbol == KEY_ENTER)
 		    	{
 				tasksMenu.close();
 				buttonText.set_text(_("(...)"));
