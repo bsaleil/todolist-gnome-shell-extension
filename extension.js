@@ -110,8 +110,8 @@ TasksManager.prototype =
 			can_focus: true
 		});
 		
-		this.entryNewTask = this.newTask.clutter_text;
-		this.entryNewTask.connect('key-press-event', function(o,e)
+		let entryNewTask = this.newTask.clutter_text;
+		entryNewTask.connect('key-press-event', function(o,e)
 		{
 			let symbol = e.get_key_symbol();
 		    	if (symbol == KEY_RETURN || symbol == KEY_ENTER)
@@ -119,7 +119,7 @@ TasksManager.prototype =
 				tasksMenu.close();
 				buttonText.set_text(_("(...)"));
 				addTask(o.get_text(),varFile);
-		    		this.entryNewTask.set_text('');
+		    		entryNewTask.set_text('');
 			}
 		});
 		
