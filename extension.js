@@ -48,6 +48,11 @@ TasksManager.prototype =
 		this.actor.add_actor(this.buttonText);
 		this.buttonText.get_parent().add_style_class_name("panelButtonWidth");
 			
+		this.menu.connect('open-state-changed', Lang.bind(this, function(menu, open)
+		{
+			if (open) { this.newTask.grab_key_focus(); }
+		}));
+			
 		this._refresh();
 	},
 	
@@ -104,8 +109,9 @@ TasksManager.prototype =
 			track_hover: true,
 			can_focus: true
 		});
-		let entryNewTask = this.newTask.clutter_text;
-		entryNewTask.connect('key-press-event', function(o,e)
+		
+		this.entryNewTask = this.newTask.clutter_text;
+		this.entryNewTask.connect('key-press-event', function(o,e)
 		{
 			let symbol = e.get_key_symbol();
 		    	if (symbol == KEY_RETURN || symbol == KEY_ENTER)
@@ -113,7 +119,7 @@ TasksManager.prototype =
 				tasksMenu.close();
 				buttonText.set_text(_("(...)"));
 				addTask(o.get_text(),varFile);
-		    		entryNewTask.set_text('');
+		    		this.entryNewTask.set_text('');
 			}
 		});
 		
