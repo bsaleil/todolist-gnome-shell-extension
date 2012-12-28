@@ -6,6 +6,7 @@
 // Licence: GPLv2+
 
 const St = imports.gi.St;
+const Gtk = imports.gi.Gtk;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const Main = imports.ui.main;
@@ -49,6 +50,7 @@ TasksManager.prototype =
     	{			
 		PanelMenu.Button.prototype._init.call(this, St.Align.START);
 
+		this.mainBox = null;
 		this.buttonText = new St.Label({text:_("(...)")});
 		this.buttonText.set_style("text-align:center;");
 		this.actor.add_actor(this.buttonText);
@@ -63,7 +65,7 @@ TasksManager.prototype =
 			Lang.bind(this, function() { this.menu.open(); })
 		);
 		
-		// Auto focus	
+		// Auto focus
 		this.menu.connect('open-state-changed', Lang.bind(this, function(menu, open)
 		{
 			if (open) { this.newTask.grab_key_focus(); }
@@ -78,14 +80,29 @@ TasksManager.prototype =
 		let tasksMenu = this.menu;
 		let buttonText = this.buttonText;
 
-    		// Clear
-    		tasksMenu.removeAll();
+    		// Destroy previous box    		
+    		if (this.mainBox != null)
+    			this.mainBox.destroy();
+    			
+    		// Create main box
+    		this.mainBox = new St.BoxLayout();
+    		this.mainBox.set_vertical(true);
+    		
+    		// Create todos box
+    		this.todosBox = new St.BoxLayout();
+    		this.todosBox.set_vertical(true);
+
+		// Create todos scrollview
+		this.scrollView = new St.ScrollView({style_class: 'vfade',
+                                          hscrollbar_policy: Gtk.PolicyType.NEVER,
+                                          vscrollbar_policy: Gtk.PolicyType.AUTOMATIC});
+		this.scrollView.add_actor(this.todosBox);
+		this.mainBox.add_actor(this.scrollView);
 		
     		// Sync
 		if (GLib.file_test(this.file, GLib.FileTest.EXISTS))
 		{
 			let content = Shell.get_file_contents_utf8_sync(this.file);
-			
 			let lines = content.toString().split('\n');
 			let tasks = 0;
 			
@@ -96,11 +113,12 @@ TasksManager.prototype =
 				{
 					let item = new PopupMenu.PopupMenuItem(_(lines[i]));
 					let textClicked = lines[i];
-					item.connect('activate', function(){
+					item.connect('activate', Lang.bind(this,function(){
+						this.menu.close();
 						buttonText.set_text(_("(...)"));
 						removeTask(textClicked,varFile);
-					});
-					tasksMenu.addMenuItem(item);
+					}));
+					this.todosBox.add(item.actor);
 					
 					tasks += 1;
 				}
@@ -113,7 +131,7 @@ TasksManager.prototype =
 		
 		// Separator
 		this.Separator = new PopupMenu.PopupSeparatorMenuItem();
-		tasksMenu.addMenuItem(this.Separator);
+		this.mainBox.add_actor(this.Separator.actor);
 		
 		// Bottom section
 		let bottomSection = new PopupMenu.PopupMenuSection();
@@ -141,7 +159,8 @@ TasksManager.prototype =
 		
 		bottomSection.actor.add_actor(this.newTask);
 		bottomSection.actor.add_style_class_name("newTaskSection");
-		tasksMenu.addMenuItem(bottomSection);
+		this.mainBox.add_actor(bottomSection.actor);
+		tasksMenu.addActor(this.mainBox);
 	},
 	
 	_enable: function()
