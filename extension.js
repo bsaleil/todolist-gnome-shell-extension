@@ -1,6 +1,7 @@
 // This extension was developed by :
 // * Baptiste Saleil http://bsaleil.org/
-// * Arnaud Bonatti https://github.com/Obsidien
+// * Community : https://github.com/bsaleil/todolist-gnome-shell-extension/network
+// With code from :https://github.com/vibou/vibou.gTile
 //
 // Licence: GPLv2+
 
@@ -13,15 +14,20 @@ const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 const Shell = imports.gi.Shell;
+const Meta = imports.gi.Meta;
+const Utils = imports.misc.extensionUtils.getCurrentExtension().imports.utils;
+const mySettings = Utils.getSettings();
 
 const Gettext = imports.gettext;
 const _ = Gettext.domain('todolist').gettext;
 
 const KEY_RETURN = 65293;
 const KEY_ENTER = 65421;
+const key_open = 'open-todolist';	// Schema key for key binding
 
-let meta;
-let todo;
+
+let meta;	// Metadata
+let todo;	// Todolist instance
 
 // TasksManager function
 function TasksManager(metadata)
@@ -48,6 +54,16 @@ TasksManager.prototype =
 		this.actor.add_actor(this.buttonText);
 		this.buttonText.get_parent().add_style_class_name("panelButtonWidth");
 			
+		// Add keybinding
+		global.display.add_keybinding
+		(
+			key_open,
+			mySettings,
+			Meta.KeyBindingFlags.NONE,
+			Lang.bind(this, function() { this.menu.open(); })
+		);
+		
+		// Auto focus	
 		this.menu.connect('open-state-changed', Lang.bind(this, function(menu, open)
 		{
 			if (open) { this.newTask.grab_key_focus(); }
@@ -138,6 +154,7 @@ TasksManager.prototype =
 
 	_disable: function()
 	{
+		global.display.remove_keybinding(key_open);
 		this.monitor.cancel();
 	}
 }

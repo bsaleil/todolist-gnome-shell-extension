@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schemalist>
+	<schema path="/org/gnome/shell/extensions/todolist/" id="org.gnome.shell.extensions.todolist" >
+		<key type="as" name="open-todolist">
+			<default><![CDATA[['<Super>space']]]></default>
+			<summary>The key you want to open todolist.</summary>
+		</key>
+	</schema>
+</schemalist>
