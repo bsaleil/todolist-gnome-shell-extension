@@ -26,15 +26,16 @@ const MAX_LENGTH = 100;
 const KEY_RETURN = 65293;
 const KEY_ENTER = 65421;
 const key_open = 'open-todolist';	// Schema key for key binding
-
+const BASE_CONTENT = "#tasks\n";
 
 let meta;	// Metadata
 let todo;	// Todolist instance
 
 // TasksManager function
 function TasksManager(metadata)
-{	
-	this.file = metadata.path + "/list.tasks";
+{
+	// File in home directory
+	this.file = GLib.get_home_dir() + "/.list.tasks";
 
 	let locales = metadata.path + "/locale";
 	Gettext.bindtextdomain('todolist', locales);
@@ -48,7 +49,11 @@ TasksManager.prototype =
 	__proto__: PanelMenu.Button.prototype,
 	
     	_init: function() 
-    	{			
+    	{
+    		// Check if file exists and create it if not
+		if (!GLib.file_test(this.file, GLib.FileTest.EXISTS))
+			GLib.file_set_contents(this.file,BASE_CONTENT);	
+    			
 		PanelMenu.Button.prototype._init.call(this, St.Align.START);
 
 		this.mainBox = null;
@@ -128,7 +133,7 @@ TasksManager.prototype =
 			if (tasks < 10) buttonText.get_parent().add_style_class_name("panelButtonWidth");
 			else buttonText.get_parent().remove_style_class_name("panelButtonWidth");
 		}
-		else { global.logError("Todo list : Error while reading file : " + varFile); }
+		else { GLib.file_set_contents(this.file,BASE_CONTENT); }
 		
 		// Separator
 		this.Separator = new PopupMenu.PopupSeparatorMenuItem();
@@ -166,7 +171,7 @@ TasksManager.prototype =
 	},
 	
 	_enable: function()
-	{		
+	{			
 		// Refresh menu
 		let fileM = Gio.file_new_for_path(this.file);
 		this.monitor = fileM.monitor(Gio.FileMonitorFlags.NONE, null);
@@ -183,11 +188,12 @@ TasksManager.prototype =
 // Remove task "text" from file "file"
 function removeTask(text,file)
 {
+	let newText = BASE_CONTENT;
 	if (GLib.file_test(file, GLib.FileTest.EXISTS))
 	{
 		let content = Shell.get_file_contents_utf8_sync(file);
 		let tasks = content.toString().split('\n');
-		let newText = "#tasks";
+		newText = newText.substring(0, newText.length-1); // to not add useless '\n'
 		
 		for (let i=0; i<tasks.length; i++)
 		{
@@ -207,13 +213,14 @@ function removeTask(text,file)
 		Shell.write_string_to_stream (out, newText);
 		out.close(null);
 	}
-	else 
-	{ global.logError("Todo list : Error while reading file : " + file); }
+	else
+	{ GLib.file_set_contents(file,newText); }
 }
 
 // Add task "text" to file "file"
 function addTask(text,file)
 {
+	let newText = BASE_CONTENT;
 	if (GLib.file_test(file, GLib.FileTest.EXISTS))
 	{
 		let content = Shell.get_file_contents_utf8_sync(file);
@@ -224,8 +231,8 @@ function addTask(text,file)
 		Shell.write_string_to_stream (out, content);
 		out.close(null);
 	}
-	else 
-	{ global.logError("Todo list : Error while reading file : " + file); }
+	else
+	{ GLib.file_set_contents(file,newText); }
 }
 
 // Init function
