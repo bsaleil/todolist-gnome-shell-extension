@@ -27,15 +27,17 @@ const KEY_RETURN = 65293;
 const KEY_ENTER = 65421;
 const key_open = 'open-todolist';	// Schema key for key binding
 const BASE_CONTENT = "#tasks\n";
+const BASE_TASKS = "Do something\nDo something else\nDo more stuff\nDo that again\n";
 
 let meta;	// Metadata
 let todo;	// Todolist instance
+let filePath;	// Tasks file path
 
 // TasksManager function
 function TasksManager(metadata)
 {
 	// File in home directory
-	this.file = GLib.get_home_dir() + "/.list.tasks";
+	filePath = GLib.get_home_dir() + "/.list.tasks";
 
 	let locales = metadata.path + "/locale";
 	Gettext.bindtextdomain('todolist', locales);
@@ -51,8 +53,8 @@ TasksManager.prototype =
     	_init: function() 
     	{
     		// Check if file exists and create it if not
-		if (!GLib.file_test(this.file, GLib.FileTest.EXISTS))
-			GLib.file_set_contents(this.file,BASE_CONTENT);	
+		if (!GLib.file_test(filePath, GLib.FileTest.EXISTS))
+			createBaseFile();	
     			
 		PanelMenu.Button.prototype._init.call(this, St.Align.START);
 
@@ -82,7 +84,7 @@ TasksManager.prototype =
 	
 	_refresh: function()
 	{    		
-		let varFile = this.file;
+		let varFile = filePath;
 		let tasksMenu = this.menu;
 		let buttonText = this.buttonText;
 
@@ -106,9 +108,9 @@ TasksManager.prototype =
 		this.mainBox.add_actor(this.scrollView);
 		
     		// Sync
-		if (GLib.file_test(this.file, GLib.FileTest.EXISTS))
+		if (GLib.file_test(filePath, GLib.FileTest.EXISTS))
 		{
-			let content = Shell.get_file_contents_utf8_sync(this.file);
+			let content = Shell.get_file_contents_utf8_sync(filePath);
 			let lines = content.toString().split('\n');
 			let tasks = 0;
 			
@@ -133,7 +135,7 @@ TasksManager.prototype =
 			if (tasks < 10) buttonText.get_parent().add_style_class_name("panelButtonWidth");
 			else buttonText.get_parent().remove_style_class_name("panelButtonWidth");
 		}
-		else { GLib.file_set_contents(this.file,BASE_CONTENT); }
+		else { createBaseFile(); }
 		
 		// Separator
 		this.Separator = new PopupMenu.PopupSeparatorMenuItem();
@@ -173,7 +175,7 @@ TasksManager.prototype =
 	_enable: function()
 	{			
 		// Refresh menu
-		let fileM = Gio.file_new_for_path(this.file);
+		let fileM = Gio.file_new_for_path(filePath);
 		this.monitor = fileM.monitor(Gio.FileMonitorFlags.NONE, null);
 		this.monitor.connect('changed', Lang.bind(this, this._refresh));
 	},
@@ -183,6 +185,12 @@ TasksManager.prototype =
 		global.display.remove_keybinding(key_open);
 		this.monitor.cancel();
 	}
+}
+
+// Create base file (base tasks list) TODO
+function createBaseFile()
+{
+	GLib.file_set_contents(filePath,BASE_CONTENT+BASE_TASKS);
 }
 
 // Remove task "text" from file "file"
@@ -214,13 +222,13 @@ function removeTask(text,file)
 		out.close(null);
 	}
 	else
-	{ GLib.file_set_contents(file,newText); }
+	{ global.logError("Todo list : Error with file : " + filePath); }
 }
 
 // Add task "text" to file "file"
 function addTask(text,file)
 {
-	let newText = BASE_CONTENT;
+	let newText = BASE_CONTENT+BASE_TASKS;
 	if (GLib.file_test(file, GLib.FileTest.EXISTS))
 	{
 		let content = Shell.get_file_contents_utf8_sync(file);
@@ -232,7 +240,7 @@ function addTask(text,file)
 		out.close(null);
 	}
 	else
-	{ GLib.file_set_contents(file,newText); }
+	{ global.logError("Todo list : Error with file : " + filePath); }
 }
 
 // Init function
