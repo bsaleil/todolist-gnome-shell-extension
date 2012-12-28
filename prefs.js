@@ -32,7 +32,7 @@ function init()
 // Build prefs UI 
 function buildPrefsWidget()
 {	
-	// TODO : read locale files
+	// Read locale files
 	let locales = Extension.dir.get_path() + "/locale";
 	Gettext.bindtextdomain('todolist', locales);
 	name_str = _('Name');
