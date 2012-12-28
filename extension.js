@@ -22,6 +22,7 @@ const mySettings = Utils.getSettings();
 const Gettext = imports.gettext;
 const _ = Gettext.domain('todolist').gettext;
 
+const MAX_LENGTH = 100;
 const KEY_RETURN = 65293;
 const KEY_ENTER = 65421;
 const key_open = 'open-todolist';	// Schema key for key binding
@@ -145,6 +146,7 @@ TasksManager.prototype =
 		});
 		
 		let entryNewTask = this.newTask.clutter_text;
+		entryNewTask.set_max_length(MAX_LENGTH);
 		entryNewTask.connect('key-press-event', function(o,e)
 		{
 			let symbol = e.get_key_symbol();
