@@ -9,12 +9,10 @@ const Gtk = imports.gi.Gtk;
 const GObject = imports.gi.GObject;
 const Utils = imports.misc.extensionUtils.getCurrentExtension().imports.utils;
 
-const keybinding_str = 'Keybinding';
-const accelerator_str = 'Accelerator';
+const name_str = 'Name';
+const value_str = 'Value';
 const opentodolist_str = 'Open todolist';
 
-// TODO TRADUCTION
-// TODO HIDE COL TITLES ?
 const pretty_names = { 'open-todolist': opentodolist_str }
 
 function append_hotkey(model, settings, name, pretty_name)
@@ -61,7 +59,7 @@ function buildPrefsWidget()
 
 	col = new Gtk.TreeViewColumn(
 	{
-		'title': keybinding_str,
+		'title': name_str,
 		'expand': true
 	});
 
@@ -94,7 +92,7 @@ function buildPrefsWidget()
 	});
 
 	col = new Gtk.TreeViewColumn({
-		'title': accelerator_str
+		'title': value_str
 	});
 
 	col.pack_end(cellrend, false);
