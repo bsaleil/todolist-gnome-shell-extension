@@ -4,3 +4,12 @@ msgstr "(···)"
 #: extension.js:95
 msgid "New task..."
 msgstr "New task…"
+#: prefs.js:40
+msgid "Name"
+msgstr "Name"
+#: prefs.js:41
+msgid "Value"
+msgstr "Value"
+#: prefs.js:42
+msgid "Open todolist"
+msgstr "Open todolist"

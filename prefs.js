@@ -8,12 +8,15 @@
 const Gtk = imports.gi.Gtk;
 const GObject = imports.gi.GObject;
 const Utils = imports.misc.extensionUtils.getCurrentExtension().imports.utils;
+const ExtensionUtils = imports.misc.extensionUtils;
+const Extension = ExtensionUtils.getCurrentExtension();
 
-const name_str = 'Name';
-const value_str = 'Value';
-const opentodolist_str = 'Open todolist';
+const Gettext = imports.gettext;
+const _ = Gettext.domain('todolist').gettext;
 
-const pretty_names = { 'open-todolist': opentodolist_str }
+let name_str = "";
+let value_str = "";
+let opentodolist_str = "";
 
 function append_hotkey(model, settings, name, pretty_name)
 {
@@ -29,6 +32,15 @@ function init()
 // Build prefs UI 
 function buildPrefsWidget()
 {	
+	// TODO : read locale files
+	let locales = Extension.dir.get_path() + "/locale";
+	Gettext.bindtextdomain('todolist', locales);
+	name_str = _('Name');
+	value_str = _('Value');
+	opentodolist_str = _('Open todolist');
+	
+	let pretty_names = { 'open-todolist': opentodolist_str }
+
 	let model = new Gtk.ListStore();
 
 	model.set_column_types
