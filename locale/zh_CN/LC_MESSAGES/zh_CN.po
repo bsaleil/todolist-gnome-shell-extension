@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: tuhaihe <1132321739qq@gmail.com>\n"
+"Last-Translator: Meng Zhuo <mengzhuo1203@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,4 +17,16 @@ msgstr "(...)"
 #: extension.js:95
 msgid "New task..."
 msgstr "新任务..."
+
+#: prefs.js:40
+msgid "Name"
+msgstr "名称"
+
+#: prefs.js:41
+msgid "Value"
+msgstr "值"
+
+#: prefs.js:42
+msgid "Open todolist"
+msgstr "打开Todo列表"
 
