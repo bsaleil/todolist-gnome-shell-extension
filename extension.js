@@ -77,6 +77,7 @@ TasksManager.prototype =
 		this.menu.connect('open-state-changed', Lang.bind(this, function(menu, open)
 		{
 			if (open) { this.newTask.grab_key_focus(); }
+			else { this.newTask.get_stage().set_key_focus(null); }
 		}));
 			
 		this._refresh();
