@@ -35,9 +35,9 @@ function buildPrefsWidget()
 	// Read locale files
 	let locales = Extension.dir.get_path() + "/locale";
 	Gettext.bindtextdomain('todolist', locales);
-	name_str = _('Name');
-	value_str = _('Value');
-	opentodolist_str = _('Open todolist');
+	name_str = _("Name");
+	value_str = _("Value");
+	opentodolist_str = _("Open todolist");
 	
 	let pretty_names = { 'open-todolist': opentodolist_str }
 
