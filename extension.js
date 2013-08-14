@@ -26,7 +26,6 @@ const MAX_LENGTH = 100;
 const KEY_RETURN = 65293;
 const KEY_ENTER = 65421;
 const key_open = 'open-todolist';	// Schema key for key binding
-const BASE_CONTENT = "#tasks\n";
 const BASE_TASKS = "Do something\nDo something else\nDo more stuff\nDo that again\n";
 
 let meta;	// Metadata
@@ -117,8 +116,8 @@ TasksManager.prototype =
 			
 			for (let i=0; i<lines.length; i++)
 			{
-				// if not a comment && not empty
-				if (lines[i][0] != '#' && lines[i] != '' && lines[i] != '\n')
+				// if not empty
+				if (lines[i] != '' && lines[i] != '\n')
 				{
 					let item = new PopupMenu.PopupMenuItem(_(lines[i]));
 					let textClicked = lines[i];
@@ -191,29 +190,25 @@ TasksManager.prototype =
 // Create base file (base tasks list) TODO
 function createBaseFile()
 {
-	GLib.file_set_contents(filePath,BASE_CONTENT+BASE_TASKS);
+	GLib.file_set_contents(filePath,BASE_TASKS);
 }
 
 // Remove task "text" from file "file"
 function removeTask(text,file)
 {
-	let newText = BASE_CONTENT;
+	let newText = "";
 	if (GLib.file_test(file, GLib.FileTest.EXISTS))
 	{
 		let content = Shell.get_file_contents_utf8_sync(file);
 		let tasks = content.toString().split('\n');
-		newText = newText.substring(0, newText.length-1); // to not add useless '\n'
 		
 		for (let i=0; i<tasks.length; i++)
 		{
 			// if not corresponding
 			if (tasks[i] != text)
 			{
-				if(tasks[i][0] != '#')
-				{
-					newText += "\n";
-					newText += tasks[i];
-				}
+				newText += "\n";
+				newText += tasks[i];
 			}
 		}
 		
@@ -229,7 +224,6 @@ function removeTask(text,file)
 // Add task "text" to file "file"
 function addTask(text,file)
 {
-	let newText = BASE_CONTENT+BASE_TASKS;
 	if (GLib.file_test(file, GLib.FileTest.EXISTS))
 	{
 		let content = Shell.get_file_contents_utf8_sync(file);
