@@ -169,7 +169,7 @@ TasksManager.prototype =
 		bottomSection.actor.add_actor(this.newTask);
 		bottomSection.actor.add_style_class_name("newTaskSection");
 		this.mainBox.add_actor(bottomSection.actor);
-		tasksMenu.addActor(this.mainBox);
+		tasksMenu.box.add(this.mainBox);
 	},
 	
 	_enable: function()
