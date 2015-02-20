@@ -58,7 +58,7 @@ TasksManager.prototype =
 		PanelMenu.Button.prototype._init.call(this, St.Align.START);
 
 		this.mainBox = null;
-		this.buttonText = new St.Label({text:_("(...)")});
+		this.buttonText = new St.Label({text:_("(...)"), y_align: Clutter.ActorAlign.CENTER});
 		this.buttonText.set_style("text-align:center;");
 		this.actor.add_actor(this.buttonText);
 		this.buttonText.get_parent().add_style_class_name("panelButtonWidth");
