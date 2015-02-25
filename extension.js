@@ -195,7 +195,7 @@ function signalKeyOpen(){
 // Check if file exists. Create it if not
 function checkFile(file){
 	if (!GLib.file_test(file, GLib.FileTest.EXISTS))
-		GLib.file_set_contents(filePath,BASE_TASKS);
+		GLib.file_set_contents(file,BASE_TASKS);
 }
 
 // Remove task 'text' from file 'file'
