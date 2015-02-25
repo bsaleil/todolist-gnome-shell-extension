@@ -137,7 +137,7 @@ TodoList.prototype._refresh = function(){
 	{
 		if (lines[i] != '' && lines[i] != '\n')
 		{
-			let item = new PopupMenu.PopupMenuItem(_(lines[i]));
+			let item = new PopupMenu.PopupMenuItem(lines[i]);
 			let textClicked = lines[i];
 			item.connect('activate', Lang.bind(this,function(){
 				this.menu.close();
