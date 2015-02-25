@@ -1,7 +1,7 @@
-// This extension was developed by :
+// Authors:
 // * Baptiste Saleil http://bsaleil.org/
-// * Community : https://github.com/bsaleil/todolist-gnome-shell-extension/network
-// With code from :https://github.com/vibou/vibou.gTile
+// * Community: https://github.com/bsaleil/todolist-gnome-shell-extension/network
+// With code from: https://github.com/vibou/vibou.gTile
 //
 // Licence: GPLv2+
 
@@ -16,19 +16,14 @@ function getSettings()
 			false);
 
 	if(!source)
-	{
 		throw new Error('Error Initializing the thingy.');
-	}
 
 	let schema = source.lookup('org.gnome.shell.extensions.todolist', false);
 
 	if(!schema)
-	{
 		throw new Error('Schema missing.');
-	}
 	
-	return new Gio.Settings(
-	{
+	return new Gio.Settings({
 		settings_schema: schema
 	});
 }

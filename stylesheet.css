@@ -2,15 +2,11 @@
 	padding:0 12px;
 }
 
-.panelButtonWidth {
-	width:40px;
-}
-
 /* Same style as #searchEntry on theme/gnome-shell.css */
 
 #newTaskEntry {
-	padding: 4px 12px;
-	border-radius: 17px;
+	padding: 7px 9px;
+	border-radius: 6px;
 	color: rgb(128, 128, 128);
 	border: 2px solid rgba(245,245,245,0.2);
 	background-gradient-start: rgba(5,5,6,0.1);
@@ -19,14 +15,14 @@
 	selected-color: black;
 	caret-color: rgb(128, 128, 128);
 	caret-size: 1px;
-	width: 250px;
+	width: 320px;
 	transition-duration: 300;
 	box-shadow: inset 0px 2px 4px rgba(0,0,0,0.6);
 }
 
 #newTaskEntry:focus,
 #newTaskEntry:hover {
-	border: 2px solid rgb(136,138,133);
+	border-width: 2px;
 	background-gradient-start: rgb(200,200,200);
 	background-gradient-end: white;
 	background-gradient-direction: vertical;
@@ -37,7 +33,6 @@
 }
 
 #newTaskEntry:focus {
-	color: rgb(64, 64, 64);
 	font-weight: bold;
 	transition-duration: 0;
 }

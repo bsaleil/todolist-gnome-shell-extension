@@ -1,7 +1,7 @@
-// This extension was developed by :
+// Authors:
 // * Baptiste Saleil http://bsaleil.org/
-// * Community : https://github.com/bsaleil/todolist-gnome-shell-extension/network
-// With code from :https://github.com/vibou/vibou.gTile
+// * Community: https://github.com/bsaleil/todolist-gnome-shell-extension/network
+// With code from: https://github.com/vibou/vibou.gTile
 //
 // Licence: GPLv2+
 
@@ -54,9 +54,7 @@ function buildPrefsWidget()
 	let settings = Utils.getSettings();
 
 	for(key in pretty_names)
-	{
 		append_hotkey(model, settings, key, pretty_names[key]);
-	}
 
 	let treeview = new Gtk.TreeView(
 	{
@@ -66,9 +64,7 @@ function buildPrefsWidget()
 
 	let col;
 	let cellrend;
-
 	cellrend = new Gtk.CellRendererText();
-
 	col = new Gtk.TreeViewColumn(
 	{
 		'title': name_str,
