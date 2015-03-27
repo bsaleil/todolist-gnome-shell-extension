@@ -1,0 +1,15 @@
+#: extension.js:40 73 106
+msgid "(...)"
+msgstr "(···)"
+#: extension.js:95
+msgid "New task..."
+msgstr "Yeni Görev…"
+#: prefs.js:40
+msgid "Name"
+msgstr "İsim"
+#: prefs.js:41
+msgid "Value"
+msgstr "Değer"
+#: prefs.js:42
+msgid "Open todolist"
+msgstr "Yapılacak Listesini Aç"
