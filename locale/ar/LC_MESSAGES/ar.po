@@ -1,0 +1,33 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: Faissal Chamekh <chamfay@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ar\n"
+"X-Generator: Poedit 1.7.5\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: extension.js:40 73 106
+msgid "(...)"
+msgstr "(...)"
+
+#: extension.js:95
+msgid "New task..."
+msgstr "مهمة جديدة..."
+
+#: prefs.js:40
+msgid "Name"
+msgstr "الاسم"
+
+#: prefs.js:41
+msgid "Value"
+msgstr "القيمة"
+
+#: prefs.js:42
+msgid "Open todolist"
+msgstr "افتح TodoList"
