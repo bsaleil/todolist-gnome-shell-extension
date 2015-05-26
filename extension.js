@@ -161,6 +161,7 @@ TodoList.prototype._refresh = function(){
 TodoList.prototype._enable = function() {
 	// Conect file 'changed' signal to _refresh
 	let fileM = Gio.file_new_for_path(this.filePath);
+	let mode = Shell.ActionMode ? Shell.ActionMode.ALL : Shell.KeyBindingMode.ALL;
 	this.monitor = fileM.monitor(Gio.FileMonitorFlags.NONE, null);
 	this.monitor.connect('changed', Lang.bind(this, this._refresh));
 
@@ -168,7 +169,7 @@ TodoList.prototype._enable = function() {
 	Main.wm.addKeybinding('open-todolist',
 		                  ExtensionSettings,
 		                  Meta.KeyBindingFlags.NONE,
-		                  Shell.KeyBindingMode.ALL,
+		                  mode,
 			              Lang.bind(this, signalKeyOpen));
 }
 
