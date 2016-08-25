@@ -28,6 +28,9 @@ const KEY_RETURN = 65293;
 const KEY_ENTER  = 65421;
 const BASE_TASKS = "Do something\nDo something else\nDo more stuff\nDo that again\n";
 
+const Clipboard = St.Clipboard.get_default();
+const CLIPBOARD_TYPE = St.ClipboardType.CLIPBOARD;
+
 let todolist;	// Todolist instance
 let meta;
 
@@ -227,6 +230,7 @@ function removeTask(text,file){
 	let f = Gio.file_new_for_path(file);
 	let out = f.replace(null, false, Gio.FileCreateFlags.NONE, null);
 	Shell.write_string_to_stream (out, newText);
+    Clipboard.set_text(CLIPBOARD_TYPE, text);
 	out.close(null);
 }
 
