@@ -230,7 +230,7 @@ function removeTask(text,file){
 	let f = Gio.file_new_for_path(file);
 	let out = f.replace(null, false, Gio.FileCreateFlags.NONE, null);
 	Shell.write_string_to_stream (out, newText);
-    Clipboard.set_text(CLIPBOARD_TYPE, text);
+	Clipboard.set_text(CLIPBOARD_TYPE, text);
 	out.close(null);
 }
 
