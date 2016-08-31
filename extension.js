@@ -53,7 +53,7 @@ TodoList.prototype._init = function(){
 
 	// Tasks file
 	this.filePath = GLib.get_home_dir() + "/.list.tasks";
-	
+
 	// Locale
 	let locales = this.meta.path + "/locale";
 	Gettext.bindtextdomain('todolist', locales);
@@ -66,12 +66,12 @@ TodoList.prototype._init = function(){
 	this.actor.add_actor(this.buttonText);
 
 	this._buildUI();
-    this._refresh();
+	this._refresh();
 }
 
 // Build popup ui
 TodoList.prototype._buildUI = function(){
-	// Destroy previous box    		
+	// Destroy previous box
 	if (this.mainBox != null)
 		this.mainBox.destroy();
 
@@ -127,7 +127,7 @@ TodoList.prototype._buildUI = function(){
 
 // Rebuild UI and read/display tasks
 TodoList.prototype._refresh = function(){
-	
+
 	// Check if tasks file exists
 	checkFile(this.filePath);
 
@@ -170,10 +170,10 @@ TodoList.prototype._enable = function() {
 
 	// Key binding
 	Main.wm.addKeybinding('open-todolist',
-		                  ExtensionSettings,
-		                  Meta.KeyBindingFlags.NONE,
-		                  mode,
-			              Lang.bind(this, signalKeyOpen));
+						  ExtensionSettings,
+						  Meta.KeyBindingFlags.NONE,
+						  mode,
+						  Lang.bind(this, signalKeyOpen));
 }
 
 // Disable method
@@ -204,7 +204,7 @@ function checkFile(file){
 
 // Remove task 'text' from file 'file'
 function removeTask(text,file){
-	
+
 	// Check if file exists
 	if (!GLib.file_test(file, GLib.FileTest.EXISTS))
 	{
@@ -225,12 +225,16 @@ function removeTask(text,file){
 			newText += "\n";
 		}
 	}
-	
+
 	// Write new text to file
 	let f = Gio.file_new_for_path(file);
 	let out = f.replace(null, false, Gio.FileCreateFlags.NONE, null);
 	Shell.write_string_to_stream (out, newText);
-	Clipboard.set_text(CLIPBOARD_TYPE, text);
+
+	// Copy removed item to clipboard if enabled
+	if(ExtensionSettings.get_boolean('clipboard'))
+		Clipboard.set_text(CLIPBOARD_TYPE, text);
+
 	out.close(null);
 }
 
@@ -251,7 +255,7 @@ function addTask(text,file)
 	// Append to content
 	let content = Shell.get_file_contents_utf8_sync(file);
 	content = content + text + "\n";
-	
+
 	// Write new text to file
 	let f = Gio.file_new_for_path(file);
 	let out = f.replace(null, false, Gio.FileCreateFlags.NONE, null);
@@ -263,8 +267,8 @@ function addTask(text,file)
 // Shell entry points
 
 // Init function
-function init(metadata) 
-{		
+function init(metadata)
+{
 	meta = metadata;
 }
 
