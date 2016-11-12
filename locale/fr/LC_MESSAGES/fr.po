@@ -1,15 +1,15 @@
 #: extension.js:40 73 106
 msgid "(...)"
 msgstr "(···)"
+
 #: extension.js:95
 msgid "New task..."
 msgstr "Nouvelle tâche…"
-#: prefs.js:40
-msgid "Name"
-msgstr "Nom"
-#: prefs.js:41
-msgid "Value"
-msgstr "Valeur"
-#: prefs.js:42
+
+#: prefs.js:31
 msgid "Open todolist"
 msgstr "Ouvrir la todolist"
+
+#: prefs.js:32
+msgid "Copy text of removed item to clipboard"
+msgstr "Copier dans le presse-papier le texte de la tâche supprimée"
