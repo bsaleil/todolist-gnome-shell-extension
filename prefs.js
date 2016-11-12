@@ -14,107 +14,125 @@ const Extension = ExtensionUtils.getCurrentExtension();
 const Gettext = imports.gettext;
 const _ = Gettext.domain('todolist').gettext;
 
-let name_str = "";
-let value_str = "";
-let opentodolist_str = "";
-
-function append_hotkey(model, settings, name, pretty_name)
-{
-	let [key, mods] = Gtk.accelerator_parse(settings.get_strv(name)[0]);
-	let row = model.insert(10);
-	model.set(row, [0, 1, 2, 3], [name, pretty_name, mods, key ]);
-}
+const OPEN_TODOLIST_KEY = 'open-todolist';
+const COPY_TO_CLIPBOARD_KEY = 'clipboard';
 
 function init()
 {
 }
 
-// Build prefs UI 
+// Build prefs UI
 function buildPrefsWidget()
-{	
+{
 	// Read locale files
 	let locales = Extension.dir.get_path() + "/locale";
 	Gettext.bindtextdomain('todolist', locales);
-	name_str = _("Name");
-	value_str = _("Value");
-	opentodolist_str = _("Open todolist");
-	
-	let pretty_names = { 'open-todolist': opentodolist_str }
 
-	let model = new Gtk.ListStore();
+	let opentodolist_str = _("Open todolist");
+	let clipboard_str = _("Copy text of removed item to clipboard");
 
-	model.set_column_types
-	([
-		GObject.TYPE_STRING,
-		GObject.TYPE_STRING,
-		GObject.TYPE_INT,
-		GObject.TYPE_INT
-	]);
+	// Get settings
 
 	let settings = Utils.getSettings();
 
-	for(key in pretty_names)
-		append_hotkey(model, settings, key, pretty_names[key]);
+	//Shortcut Box
 
-	let treeview = new Gtk.TreeView(
-	{
-		'expand': true,
-		'model': model
-	});
+	let shortcut_hbox = new Gtk.HBox({margin_left: 20, margin_top: 10, spacing: 6});
+	let model = new Gtk.ListStore();
 
-	let col;
-	let cellrend;
-	cellrend = new Gtk.CellRendererText();
-	col = new Gtk.TreeViewColumn(
-	{
-		'title': name_str,
-		'expand': true
-	});
+	model.set_column_types([
+		GObject.TYPE_INT,
+		GObject.TYPE_INT
+	]);
+	let row = model.append();
+	let binding = settings.get_strv(OPEN_TODOLIST_KEY)[0];
+	let key, mods;
+	if (binding) {
+		[key, mods] = Gtk.accelerator_parse(binding);
+	} else {
+		[key, mods] = [0, 0];
+	}
+	model.set(row, [0, 1], [mods, key]);
 
-	col.pack_start(cellrend, true);
-	col.add_attribute(cellrend, 'text', 1);
-
-	treeview.append_column(col);
-
-	cellrend = new Gtk.CellRendererAccel({
+	let treeview = new Gtk.TreeView({ 'expand': false, 'model': model });
+	let cellrend = new Gtk.CellRendererAccel({
 		'editable': true,
 		'accel-mode': Gtk.CellRendererAccelMode.GTK
 	});
 
 	cellrend.connect('accel-edited', function(rend, iter, key, mods) {
 		let value = Gtk.accelerator_name(key, mods);
-		
-		let [succ, iter ] = model.get_iter_from_string(iter);
-		
-		if(!succ) {
-			throw new Error("Something be broken, yo.");
+		let [succ, iterator] = model.get_iter_from_string(iter);
+
+		if (!succ) {
+			throw new Error("Error updating keybinding");
 		}
 
-		let name = model.get_value(iter, 0);
-
-		model.set(iter, [ 2, 3 ], [ mods, key ]);
-
-		global.log("Changing value for " + name + ": " + value);
-
-		settings.set_strv(name, [value]);
+		model.set(iterator, [0, 1], [mods, key]);
+		settings.set_strv(OPEN_TODOLIST_KEY, [value]);
 	});
 
-	col = new Gtk.TreeViewColumn({
-		'title': value_str
+	cellrend.connect('accel-cleared', function(rend, iter, key, mods) {
+		let [succ, iterator] = model.get_iter_from_string(iter);
+
+		if (!succ) {
+			throw new Error("Error clearing keybinding");
+		}
+
+		model.set(iterator, [0, 1], [0, 0]);
+		settings.set_strv(OPEN_TODOLIST_KEY, []);
 	});
+
+	let col = new Gtk.TreeViewColumn({ min_width: 200 });
 
 	col.pack_end(cellrend, false);
-	col.add_attribute(cellrend, 'accel-mods', 2);
-	col.add_attribute(cellrend, 'accel-key', 3);
-
+	col.add_attribute(cellrend, 'accel-mods', 0);
+	col.add_attribute(cellrend, 'accel-key', 1);
 	treeview.append_column(col);
+	treeview.set_headers_visible(false);
 
-	let win = new Gtk.ScrolledWindow(
-	{
-		'vexpand': true
+	shortcut_hbox.pack_start(new Gtk.Label({
+		label: _("Open todolist"),
+		use_markup: true,
+		xalign: 0
+	}), true, true, 0);
+	shortcut_hbox.pack_end(treeview, false, true, 0);
+
+	settings.connect('changed::shortcut-keybind', function(k, b) {
+		let row = model.get(0);
+		model.set(row, [0, 1], settings.get_strv(b));
 	});
-	win.add(treeview);	
-	win.show_all();
 
-	return win;
+
+	// Switch Box
+
+	let switch_hbox = new Gtk.HBox({margin_left: 20, margin_top: 10, spacing: 6});
+	let onoff = new Gtk.Switch({active: settings.get_boolean(COPY_TO_CLIPBOARD_KEY)});
+
+	switch_hbox.pack_start(new Gtk.Label({
+		label: clipboard_str,
+		use_markup: true,
+		xalign: 0
+	}), true, true, 0);
+	switch_hbox.pack_end(onoff, false, false, 0);
+
+	settings.connect('changed::'+COPY_TO_CLIPBOARD_KEY, function(k,b) {
+		onoff.set_active(settings.get_boolean(b));
+	});
+
+	onoff.connect('notify::active', function(w) {
+		settings.set_boolean(COPY_TO_CLIPBOARD_KEY, w.active);
+	});
+
+	//Draw frame
+
+	let frame = new Gtk.VBox({border_width: 10, spacing: 6});
+
+	frame.pack_start(shortcut_hbox, false,false, 0);
+
+	frame.pack_start(switch_hbox, false,false, 0);
+
+	frame.show_all();
+
+	return frame;
 }
