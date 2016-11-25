@@ -158,15 +158,25 @@ TodoList.prototype._refresh = function(){
 	// Restore hint text
 	this.newTask.hint_text = _("New task...");
 
+        this._addKeybinding();
 }
 
 // Enable method
 TodoList.prototype._enable = function() {
 	// Conect file 'changed' signal to _refresh
 	let fileM = Gio.file_new_for_path(this.filePath);
-	let mode = Shell.ActionMode ? Shell.ActionMode.ALL : Shell.KeyBindingMode.ALL;
 	this.monitor = fileM.monitor(Gio.FileMonitorFlags.NONE, null);
 	this.monitor.connect('changed', Lang.bind(this, this._refresh));
+
+        this._addKeybinding();
+}
+
+// Enable method
+TodoList.prototype._addKeybinding = function() {
+	let mode = Shell.ActionMode ? Shell.ActionMode.ALL : Shell.KeyBindingMode.ALL;
+
+        // Remove to avoid duplicate
+	Main.wm.removeKeybinding('open-todolist');
 
 	// Key binding
 	Main.wm.addKeybinding('open-todolist',
