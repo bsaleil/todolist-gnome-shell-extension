@@ -2,6 +2,7 @@
   "description": "Simple todo list extension. You can add and remove task on your list.", 
   "name": "Todo list", 
   "shell-version": [
+      3.24,
       "3.20",
       "3.16",
       "3.14"
