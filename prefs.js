@@ -62,7 +62,7 @@ function buildPrefsWidget()
 
 	cellrend.connect('accel-edited', function(rend, iter, key, mods) {
 		let value = Gtk.accelerator_name(key, mods);
-		let [succ, iterator] = model.get_iter_from_string(iter);
+		[succ, iterator] = model.get_iter_from_string(iter);
 
 		if (!succ) {
 			throw new Error("Error updating keybinding");
@@ -73,7 +73,7 @@ function buildPrefsWidget()
 	});
 
 	cellrend.connect('accel-cleared', function(rend, iter, key, mods) {
-		let [succ, iterator] = model.get_iter_from_string(iter);
+		[succ, iterator] = model.get_iter_from_string(iter);
 
 		if (!succ) {
 			throw new Error("Error clearing keybinding");
