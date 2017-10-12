@@ -3,11 +3,7 @@
   "name": "Todo list", 
   "shell-version": [
       3.24,
-      3.22,
-      "3.20",
-      3.18,
-      "3.16",
-      "3.14"
+      3.26
   ], 
   "url": "https://github.com/bsaleil/todolist-gnome-shell-extension", 
   "uuid": "todolist@bsaleil.org"
