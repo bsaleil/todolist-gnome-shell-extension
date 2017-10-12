@@ -13,7 +13,8 @@ Go to [GNOME Shell page](https://extensions.gnome.org/extension/162/todo-list/) 
 mkdir -p ~/.local/share/gnome-shell/extensions/
 cd ~/.local/share/gnome-shell/extensions/
 rm todolist@bsaleil.org -rf
-git clone https://github.com/bsaleil/todolist-gnome-shell-extension.git todolist@bsaleil.org```
+git clone https://github.com/bsaleil/todolist-gnome-shell-extension.git todolist@bsaleil.org
+```
 
 2. Activate the extension
     * Restart gnome-shell or logoff/logon.
