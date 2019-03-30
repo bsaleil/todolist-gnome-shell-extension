@@ -16,6 +16,7 @@ const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 const Shell = imports.gi.Shell;
 const Meta = imports.gi.Meta;
+const GObject = imports.gi.GObject;
 
 const Gettext = imports.gettext;
 const _ = Gettext.domain('todolist').gettext;
@@ -36,151 +37,140 @@ let meta;
 
 //----------------------------------------------------------------------
 
-// TodoList object
-function TodoList(metadata)
-{
-	this.meta = metadata;
-	this._init();
-}
+// TodoList class
+let TodoList = GObject.registerClass(
+class TodoList extends PanelMenu.Button {
 
-TodoList.prototype.__proto__ = PanelMenu.Button.prototype;
+	_init() {
+		super._init(1.0, null, false);
+		this.meta = meta;
 
-//----------------------------------------------------------------------
-// TodoList methods
+		// Tasks file
+		this.filePath = GLib.get_home_dir() + "/.list.tasks";
 
-// Init
-TodoList.prototype._init = function(){
+		// Locale
+		let locales = this.meta.path + "/locale";
+		Gettext.bindtextdomain('todolist', locales);
 
-	// Tasks file
-	this.filePath = GLib.get_home_dir() + "/.list.tasks";
+		// Button ui
+		this.mainBox = null;
+		this.buttonText = new St.Label({text:_("(...)"), y_align: Clutter.ActorAlign.CENTER});
+		this.buttonText.set_style("text-align:center;");
+		this.actor.add_actor(this.buttonText);
 
-	// Locale
-	let locales = this.meta.path + "/locale";
-	Gettext.bindtextdomain('todolist', locales);
-
-	// Button ui
-	PanelMenu.Button.prototype._init.call(this, St.Align.START);
-	this.mainBox = null;
-	this.buttonText = new St.Label({text:_("(...)"), y_align: Clutter.ActorAlign.CENTER});
-	this.buttonText.set_style("text-align:center;");
-	this.actor.add_actor(this.buttonText);
-
-	this._buildUI();
-	this._refresh();
-}
-
-// Build popup ui
-TodoList.prototype._buildUI = function(){
-	// Destroy previous box
-	if (this.mainBox != null)
-		this.mainBox.destroy();
-
-	// Create main box
-	this.mainBox = new St.BoxLayout();
-	this.mainBox.set_vertical(true);
-
-	// Create todos box
-	this.todosBox = new St.BoxLayout();
-	this.todosBox.set_vertical(true);
-
-	// Create todos scrollview
-	var scrollView = new St.ScrollView({style_class: 'vfade',
-		hscrollbar_policy: Gtk.PolicyType.NEVER,
-		vscrollbar_policy: Gtk.PolicyType.AUTOMATIC});
-	scrollView.add_actor(this.todosBox);
-	this.mainBox.add_actor(scrollView);
-
-	// Separator
-	var separator = new PopupMenu.PopupSeparatorMenuItem();
-	this.mainBox.add_actor(separator.actor);
-
-	// Text entry
-	this.newTask = new St.Entry(
-	{
-		name: "newTaskEntry",
-		hint_text: _("New task..."),
-		track_hover: true,
-		can_focus: true
-	});
-
-	let entryNewTask = this.newTask.clutter_text;
-	entryNewTask.set_max_length(MAX_LENGTH);
-	entryNewTask.connect('key-press-event', Lang.bind(this,function(o,e)
-	{
-		let symbol = e.get_key_symbol();
-		if (symbol == KEY_RETURN || symbol == KEY_ENTER)
-		{
-			this.menu.close();
-			this.buttonText.set_text(_("(...)"));
-			addTask(o.get_text(),this.filePath);
-			entryNewTask.set_text('');
-		}
-	}));
-
-	// Bottom section
-	var bottomSection = new PopupMenu.PopupMenuSection();
-	bottomSection.actor.add_actor(this.newTask);
-	bottomSection.actor.add_style_class_name("newTaskSection");
-	this.mainBox.add_actor(bottomSection.actor);
-	this.menu.box.add(this.mainBox);
-}
-
-// Rebuild UI and read/display tasks
-TodoList.prototype._refresh = function(){
-
-	// Check if tasks file exists
-	checkFile(this.filePath);
-
-	// Add all tasks to ui
-	this.todosBox.destroy_all_children();
-	let content = Shell.get_file_contents_utf8_sync(this.filePath);
-	let lines = content.toString().split('\n');
-	let tasks = 0;
-	for (let i=0; i<lines.length; i++)
-	{
-		if (lines[i] != '' && lines[i] != '\n')
-		{
-			let item = new PopupMenu.PopupMenuItem(lines[i]);
-			let textClicked = lines[i];
-			item.connect('activate', Lang.bind(this,function(){
-				this.menu.close();
-				this.buttonText.set_text(_("(...)"));
-				removeTask(textClicked,this.filePath);
-			}));
-			this.todosBox.add(item.actor);
-			tasks += 1;
-		}
+		this._buildUI();
+		this._refresh();
 	}
 
-	// Update status button
-	this.buttonText.set_text("(" + tasks + ")");
+	_buildUI(){
+		// Destroy previous box
+		if (this.mainBox != null)
+			this.mainBox.destroy();
 
-	// Restore hint text
-	this.newTask.hint_text = _("New task...");
+		// Create main box
+		this.mainBox = new St.BoxLayout();
+		this.mainBox.set_vertical(true);
 
-}
+		// Create todos box
+		this.todosBox = new St.BoxLayout();
+		this.todosBox.set_vertical(true);
 
-// Enable method
-TodoList.prototype._enable = function() {
-	// Conect file 'changed' signal to _refresh
-	let fileM = Gio.file_new_for_path(this.filePath);
-	let mode = Shell.ActionMode ? Shell.ActionMode.ALL : Shell.KeyBindingMode.ALL;
-	this.monitor = fileM.monitor(Gio.FileMonitorFlags.NONE, null);
-	this.monitor.connect('changed', Lang.bind(this, this._refresh));
+		// Create todos scrollview
+		var scrollView = new St.ScrollView({style_class: 'vfade',
+			hscrollbar_policy: Gtk.PolicyType.NEVER,
+			vscrollbar_policy: Gtk.PolicyType.AUTOMATIC});
+		scrollView.add_actor(this.todosBox);
+		this.mainBox.add_actor(scrollView);
 
-	// Key binding
-	Main.wm.addKeybinding('open-todolist',
-						  ExtensionSettings,
-						  Meta.KeyBindingFlags.NONE,
-						  mode,
-						  Lang.bind(this, signalKeyOpen));
-}
+		// Separator
+		var separator = new PopupMenu.PopupSeparatorMenuItem();
+		this.mainBox.add_actor(separator.actor);
 
-// Disable method
-TodoList.prototype._disable = function() {
-	// Stop monitoring file
-	this.monitor.cancel();
-}
+		// Text entry
+		this.newTask = new St.Entry(
+		{
+			name: "newTaskEntry",
+			hint_text: _("New task..."),
+			track_hover: true,
+			can_focus: true
+		});
+
+		let entryNewTask = this.newTask.clutter_text;
+		entryNewTask.set_max_length(MAX_LENGTH);
+		entryNewTask.connect('key-press-event', Lang.bind(this,function(o,e)
+		{
+			let symbol = e.get_key_symbol();
+			if (symbol == KEY_RETURN || symbol == KEY_ENTER)
+			{
+				this.menu.close();
+				this.buttonText.set_text(_("(...)"));
+				addTask(o.get_text(),this.filePath);
+				entryNewTask.set_text('');
+			}
+		}));
+
+		// Bottom section
+		var bottomSection = new PopupMenu.PopupMenuSection();
+		bottomSection.actor.add_actor(this.newTask);
+		bottomSection.actor.add_style_class_name("newTaskSection");
+		this.mainBox.add_actor(bottomSection.actor);
+		this.menu.box.add(this.mainBox);
+	}
+
+	_refresh(){
+
+		// Check if tasks file exists
+		checkFile(this.filePath);
+
+		// Add all tasks to ui
+		this.todosBox.destroy_all_children();
+		let content = Shell.get_file_contents_utf8_sync(this.filePath);
+		let lines = content.toString().split('\n');
+		let tasks = 0;
+		for (let i=0; i<lines.length; i++)
+		{
+			if (lines[i] != '' && lines[i] != '\n')
+			{
+				let item = new PopupMenu.PopupMenuItem(lines[i]);
+				let textClicked = lines[i];
+				item.connect('activate', Lang.bind(this,function(){
+					this.menu.close();
+					this.buttonText.set_text(_("(...)"));
+					removeTask(textClicked,this.filePath);
+				}));
+				this.todosBox.add(item.actor);
+				tasks += 1;
+			}
+		}
+
+		// Update status button
+		this.buttonText.set_text("(" + tasks + ")");
+
+		// Restore hint text
+		this.newTask.hint_text = _("New task...");
+
+	}
+
+	_enable() {
+		// Conect file 'changed' signal to _refresh
+		let fileM = Gio.file_new_for_path(this.filePath);
+		let mode = Shell.ActionMode ? Shell.ActionMode.ALL : Shell.KeyBindingMode.ALL;
+		this.monitor = fileM.monitor(Gio.FileMonitorFlags.NONE, null);
+		this.monitor.connect('changed', Lang.bind(this, this._refresh));
+
+		// Key binding
+		Main.wm.addKeybinding('open-todolist',
+							  ExtensionSettings,
+							  Meta.KeyBindingFlags.NONE,
+							  mode,
+							  Lang.bind(this, signalKeyOpen));
+	}
+
+	_disable() {
+		// Stop monitoring file
+		this.monitor.cancel();
+	}
+});
 
 //----------------------------------------------------------------------
 // Utils
@@ -274,9 +264,9 @@ function init(metadata)
 
 function enable()
 {
-	todolist = new TodoList(meta);
+	todolist = new TodoList();
 	todolist._enable();
-	Main.panel.addToStatusArea('todolist', todolist);
+	Main.panel.addToStatusArea('todolist', todolist, 1, 'right');
 }
 
 function disable()
