@@ -54,7 +54,7 @@ class TodoList extends PanelMenu.Button {
 
 		// Button ui
 		this.mainBox = null;
-		this.buttonText = new St.Label({text:_("(...)"), y_align: Clutter.ActorAlign.CENTER});
+		this.buttonText = new St.Label({text:_("TODO: ..."), y_align: Clutter.ActorAlign.CENTER});
 		this.buttonText.set_style("text-align:center;");
 		this.actor.add_actor(this.buttonText);
 
@@ -103,7 +103,7 @@ class TodoList extends PanelMenu.Button {
 			if (symbol == KEY_RETURN || symbol == KEY_ENTER)
 			{
 				this.menu.close();
-				this.buttonText.set_text(_("(...)"));
+				this.buttonText.set_text(_("TODO: ..."));
 				addTask(o.get_text(),this.filePath);
 				entryNewTask.set_text('');
 			}
@@ -135,7 +135,7 @@ class TodoList extends PanelMenu.Button {
 				let textClicked = lines[i];
 				item.connect('activate', Lang.bind(this,function(){
 					this.menu.close();
-					this.buttonText.set_text(_("(...)"));
+					this.buttonText.set_text(_("TODO: ..."));
 					removeTask(textClicked,this.filePath);
 				}));
 				this.todosBox.add(item.actor);
@@ -144,7 +144,7 @@ class TodoList extends PanelMenu.Button {
 		}
 
 		// Update status button
-		this.buttonText.set_text("(" + tasks + ")");
+		this.buttonText.set_text("TODO: " + tasks);
 
 		// Restore hint text
 		this.newTask.hint_text = _("New task...");
