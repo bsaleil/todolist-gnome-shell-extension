@@ -155,7 +155,7 @@ class TodoList extends PanelMenu.Button {
 		// Conect file 'changed' signal to _refresh
 		let fileM = Gio.file_new_for_path(this.filePath);
 		let mode = Shell.ActionMode ? Shell.ActionMode.ALL : Shell.KeyBindingMode.ALL;
-		this.monitor = fileM.monitor(Gio.FileMonitorFlags.NONE, null);
+		this.monitor = fileM.monitor(Gio.FileMonitorFlags.WATCH_HARD_LINKS, null);
 		this.monitor.connect('changed', Lang.bind(this, this._refresh));
 
 		// Key binding
