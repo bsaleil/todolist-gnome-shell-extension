@@ -102,7 +102,6 @@ class TodoList extends PanelMenu.Button {
 			let symbol = e.get_key_symbol();
 			if (symbol == KEY_RETURN || symbol == KEY_ENTER)
 			{
-				this.menu.close();
 				this.buttonText.set_text(_("(...)"));
 				addTask(o.get_text(),this.filePath);
 				entryNewTask.set_text('');
@@ -134,7 +133,6 @@ class TodoList extends PanelMenu.Button {
 				let item = new PopupMenu.PopupMenuItem(lines[i]);
 				let textClicked = lines[i];
 				item.connect('activate', Lang.bind(this,function(){
-					this.menu.close();
 					this.buttonText.set_text(_("(...)"));
 					removeTask(textClicked,this.filePath);
 				}));
