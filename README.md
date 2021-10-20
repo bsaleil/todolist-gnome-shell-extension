@@ -18,8 +18,14 @@ git clone https://github.com/bsaleil/todolist-gnome-shell-extension.git todolist
 
 2. Activate the extension
     * Restart gnome-shell or logoff/logon.
-    * Activate the extension in gnome-tweak-tool
+    * Activate the extension in <b>gnome-tweak-tool</b>
 
+## Whats new:
+
+* Added setting for keeping the menu open during task addition or deletion.
+
+![plot](./img/settings.png)
+![plot](./img/tasks.png)
 ## License
 
 Licensed under the GNU General Public License. See `COPYING` for details.

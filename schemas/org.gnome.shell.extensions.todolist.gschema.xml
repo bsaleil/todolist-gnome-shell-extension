@@ -9,5 +9,9 @@
 			<default>false</default>
 			<summary>Choose whether to copy the text of the removed list item to clipboard.</summary>
 		</key>
+		<key type="b" name="keep-menu-open">
+			<default>false</default>
+			<summary>Choose whether to keep the todo list menu open after adding/deleting a task.</summary>
+		</key>
 	</schema>
 </schemalist>

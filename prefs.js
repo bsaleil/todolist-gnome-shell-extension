@@ -16,6 +16,7 @@ const _ = Gettext.domain('todolist').gettext;
 
 const OPEN_TODOLIST_KEY = 'open-todolist';
 const COPY_TO_CLIPBOARD_KEY = 'clipboard';
+const KEEP_MENU_OPEN = 'keep-menu-open';
 
 function init()
 {
@@ -30,6 +31,7 @@ function buildPrefsWidget()
 
 	let opentodolist_str = _("Open todolist");
 	let clipboard_str = _("Copy text of removed item to clipboard");
+	let keep_menu_open = _("Keep the menu open after adding/removing a task");
 
 	// Get settings
 
@@ -124,6 +126,26 @@ function buildPrefsWidget()
 		settings.set_boolean(COPY_TO_CLIPBOARD_KEY, w.active);
 	});
 
+	// Switch Box to keep menu open
+
+	let switch_hbox_menu = new Gtk.HBox({margin_left: 20, margin_top: 10, spacing: 6});
+	let onoff_menu = new Gtk.Switch({active: settings.get_boolean(KEEP_MENU_OPEN)});
+
+	switch_hbox_menu.pack_start(new Gtk.Label({
+		label: keep_menu_open,
+		use_markup: true,
+		xalign: 0
+	}), true, true, 0);
+	switch_hbox_menu.pack_end(onoff_menu, false, false, 0);
+
+	settings.connect('changed::'+KEEP_MENU_OPEN, function(k,b) {
+		onoff_menu.set_active(settings.get_boolean(b));
+	});
+
+	onoff_menu.connect('notify::active', function(w) {
+		settings.set_boolean(KEEP_MENU_OPEN, w.active);
+	});
+
 	//Draw frame
 
 	let frame = new Gtk.VBox({border_width: 10, spacing: 6});
@@ -131,6 +153,8 @@ function buildPrefsWidget()
 	frame.pack_start(shortcut_hbox, false,false, 0);
 
 	frame.pack_start(switch_hbox, false,false, 0);
+
+	frame.pack_start(switch_hbox_menu, false,false, 0);
 
 	frame.show_all();
 
