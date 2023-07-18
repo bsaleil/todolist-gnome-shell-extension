@@ -2,7 +2,7 @@
   "description": "Simple todo list extension. You can add and remove tasks on your list.",
   "name": "Todo list",
   "shell-version": [
-      "3.32", "40"
+      "3.32", "40", "42"
   ],
   "url": "https://github.com/bsaleil/todolist-gnome-shell-extension",
   "uuid": "todolist@bsaleil.org"
